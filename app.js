@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var customer = require('./lib/customer.js');
 var handlebars = require('express3-handlebars').create({ defaultLayout:'main' })
+var routes = require('./routes.js');
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
@@ -10,30 +11,26 @@ app.set('port', process.env.PORT || 3000);
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res){
-   customer.firstname = "Jan";
-   customer.surname = "Brown";
-   customer.age = 34;   
-   res.render('home', 
-      {
-	     firstname : customer.firstname,
-		 surname : customer.surname,
-		 age : customer.age
-		 });
-   
+app.use(function(req, res, next){
+	res.locals.showTests = app.get('env') !== 'production' &&
+												req.query.test === '1';
+	next();
 });
 
-app.get('/about', function(req, res){
-	customer.addressLine1 = "1 bum terrace";
-	customer.addressLine2 = "harrow";
-	customer.postcode = "FY5";
-	res.render('about', 
-	  { 
-	      fullName : customer.getFullName(),
-		  fullAddress : customer.getFullAddress()});		
-	  });
+app.get('/', function(req, res){
+		   customer.firstname = "Jan";
+		   customer.surname = "Brown";
+		   customer.age = 34;   
+		   res.render('home', 
+			  {
+				 firstname : customer.firstname,
+				 surname : customer.surname,
+				 age : customer.age
+				 });
+		   
+		});
+routes.bind(app);
 
-// custom 404 page
 app.use(function(req, res){
 	res.status(404);
 	res.render('404');
