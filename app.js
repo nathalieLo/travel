@@ -13,7 +13,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res){
    customer.firstname = "Jan";
    customer.surname = "Brown";
-   customer.age = 34;
+   customer.age = 34;   
    res.render('home', 
       {
 	     firstname : customer.firstname,
@@ -24,8 +24,14 @@ app.get('/', function(req, res){
 });
 
 app.get('/about', function(req, res){
-	res.render('about');
-});
+	customer.addressLine1 = "1 bum terrace";
+	customer.addressLine2 = "harrow";
+	customer.postcode = "FY5";
+	res.render('about', 
+	  { 
+	      fullName : customer.getFullName(),
+		  fullAddress : customer.getFullAddress()});		
+	  });
 
 // custom 404 page
 app.use(function(req, res){
