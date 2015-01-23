@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-
+var customer = require('./lib/customer.js');
 var handlebars = require('express3-handlebars').create({ defaultLayout:'main' })
 
 app.engine('handlebars', handlebars.engine);
@@ -8,8 +8,19 @@ app.set('view engine', 'handlebars');
 
 app.set('port', process.env.PORT || 3000);
 
+app.use(express.static(__dirname + '/public'));
+
 app.get('/', function(req, res){
-   res.render('home', {name : "Paul"});
+   customer.firstname = "Jan";
+   customer.surname = "Brown";
+   customer.age = 34;
+   res.render('home', 
+      {
+	     firstname : customer.firstname,
+		 surname : customer.surname,
+		 age : customer.age
+		 });
+   
 });
 
 app.get('/about', function(req, res){
